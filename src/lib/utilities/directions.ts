@@ -1,7 +1,15 @@
+import { readConfigFile } from 'typescript';
+
 export function degreesToRadians(degrees: number): number {
-  return Math.PI / 180 * degrees;
+  return (Math.PI / 180) * degrees;
 }
 
+
+export function radiansToDegrees(radians: number, precision: number = 2): number {
+  if (radians === 0) return 0;
+  const multiplier = 10 ** precision;
+  return Math.round(((180 / Math.PI) * radians) * multiplier) / multiplier;
+}
 
 export function normalizeBearing(val: number | string, force360: boolean = true): number {
   const numVal = +val;

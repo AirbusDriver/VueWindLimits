@@ -1,4 +1,4 @@
-import { degreesToRadians, normalizeBearing } from "../directions";
+import { degreesToRadians, normalizeBearing, radiansToDegrees } from "../directions";
 
 describe("degreesToRadians", () => {
   test.each([
@@ -6,7 +6,18 @@ describe("degreesToRadians", () => {
     [360, Math.PI * 2],
     [-360, Math.PI * -2]
   ])("degrees: %d expected radians: %d", (inp, exp) => {
-    expect(degreesToRadians(inp)).toBeCloseTo(exp, 5);
+    expect(degreesToRadians(inp)).toBeCloseTo(exp, 2);
+  });
+});
+
+describe("radiansToDegrees", () => {
+  test.each([
+    [0, 0],
+    [Math.PI * 2, 360],
+    [Math.PI * -2, -360],
+    [Math.PI, 180]
+  ])("radians: %d expected degrees: %d", (inp, exp) => {
+    expect(radiansToDegrees(inp)).toBeCloseTo(exp, 2);
   });
 });
 
