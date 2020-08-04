@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Component from "vue-class-component";
-import exceedenceSeverityLevelEnum from "../components/shared/exceedences";
+import { ExceedenceSeverity } from "@/components/shared/interfaces";
 
 type AircraftLimitations = {
   maxCrosswind: number;
@@ -67,26 +67,26 @@ export default class CrosswindReadout extends CrosswindReadoutProps {
     return this.round(scalar, roundVal);
   }
 
-  get exceedenceSeverity(): exceedenceSeverityLevelEnum {
+  get exceedenceSeverity(): ExceedenceSeverity {
     const thresholdPct = 0.8;
     const thresholdSpeed = thresholdPct * this.maxCrosswind;
     const normalizedVal = this.normalized;
 
     if (normalizedVal < thresholdSpeed) {
-      return exceedenceSeverityLevelEnum.LOW;
+      return ExceedenceSeverity.LOW;
     } else if (normalizedVal > this.maxCrosswind) {
-      return exceedenceSeverityLevelEnum.HIGH;
+      return ExceedenceSeverity.HIGH;
     } else {
-      return exceedenceSeverityLevelEnum.MED;
+      return ExceedenceSeverity.MED;
     }
   }
 
   get exceedenceClass(): string {
-    const exceedence: exceedenceSeverityLevelEnum = this.exceedenceSeverity;
+    const exceedence: ExceedenceSeverity = this.exceedenceSeverity;
     const exceedenceClasses = {
-      [exceedenceSeverityLevelEnum.LOW]: "low",
-      [exceedenceSeverityLevelEnum.MED]: "med",
-      [exceedenceSeverityLevelEnum.HIGH]: "high"
+      [ExceedenceSeverity.LOW]: "low",
+      [ExceedenceSeverity.MED]: "med",
+      [ExceedenceSeverity.HIGH]: "high"
     };
 
     const lookupResult = exceedenceClasses[exceedence];

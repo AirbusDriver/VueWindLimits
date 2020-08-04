@@ -1,6 +1,6 @@
 <template>
-  <div class="calculator container center-align">
-    <h1>Wind Calculator</h1>
+  <div class="calculator container">
+    <h3>Wind Calculator</h3>
     <div class="row">
       <div class="col s12">
         <aircraft-limitations-card
@@ -9,15 +9,9 @@
           @limitationsChanged="updateAircraftLimitations"
         />
       </div>
-    </div>
 
-    <div class="row">
       <div class="col s12 m6">
-        <runway-information-card
-          :value="runwayHeading"
-          @input="runwayHeading = $event"
-          style="height: 400px"
-        />
+        <runway-information-card :value="runwayHeading" @input="runwayHeading = $event" />
       </div>
 
       <div class="col s12 m6">
@@ -25,29 +19,31 @@
           :initial-wind-speed="windInfo.speed"
           :initial-wind-direction="windInfo.direction"
           :units="units"
-          style="height: 400px"
           @update:wind-info="windInfo = $event"
         />
       </div>
 
       <div class="col s12">
-        <div class="wind-components">
-          <CrosswindReadout
-            :crosswind-strength="crosswind"
-            :maxCrosswind="aircraftLimitationsData.maxCrossWindValue"
-          ></CrosswindReadout>
-        </div>
+        <the-exceedence-card
+          :current-wind-conditions="windConditions"
+          :aircraft-limitations="aircraftLimitations"
+          :runway-heading="runwayHeading"
+        ></the-exceedence-card>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import { calculateCrosswind } from "../lib/windCalculations";
-import AircraftLimitationsCard from "./AircraftLimitationsCard";
-import RunwayInformationCard from "./TheRunwayInformationCard";
-import WindInformation from "./WindInformation";
-import CrosswindReadout from "./CrosswindReadout";
+<script lang="ts">
+import Vue from "vue";
+import { calculateCrosswind } from "../core/windCalculations";
+import { AircraftLimitations } from "../core/limitations/interfaces";
+import AircraftLimitationsCard from "./AircraftLimitationsCard.vue";
+import RunwayInformationCard from "./TheRunwayInformationCard.vue";
+import { ExceedenceCard as TheExceedenceCard } from "./TheExceedenceCard";
+import WindInformation from "./WindInformation.vue";
+import CrosswindReadout from "./CrosswindReadout.vue";
+import { WindCondition } from "../core/winds";
 
 const DEFAULT_AIRCRAFT_LIMITATIONS = {
   maxTailWindTakeoffValue: 15,
@@ -60,12 +56,25 @@ let initialWindConditions = {
   direction: 0
 };
 
-export default {
+interface IAircraftLimitationsData {
+  maxTailWindTakeoffValue: number;
+  maxTailWindLandingValue: number;
+  maxCrossWindValue: number;
+}
+
+interface CalcData {
+  aircraftLimitationsData: IAircraftLimitationsData;
+  windInfo: { speed: number; direction: number };
+  runwayHeading: number;
+  units: string;
+}
+
+export default Vue.extend({
   name: "Calculator",
-  data: function() {
+  data: function(): CalcData {
     return {
-      aircraftLimitationsData: Object.assign({}, DEFAULT_AIRCRAFT_LIMITATIONS),
-      windInfo: Object.assign({}, initialWindConditions),
+      aircraftLimitationsData: { ...DEFAULT_AIRCRAFT_LIMITATIONS },
+      windInfo: { ...initialWindConditions },
       runwayHeading: 0,
       units: "kts"
     };
@@ -74,30 +83,56 @@ export default {
     AircraftLimitationsCard,
     RunwayInformationCard,
     WindInformation,
-    CrosswindReadout
+    TheExceedenceCard
   },
   computed: {
-    crosswind: function() {
+    crosswind: function(): number {
       return calculateCrosswind(
         this.windInfo.direction - this.runwayHeading,
         this.windInfo.speed
       );
+    },
+    windConditions: function(): WindCondition {
+      return new WindCondition(this.windInfo.direction, this.windInfo.speed);
+    },
+    aircraftLimitations: function(): AircraftLimitations {
+      return {
+        maxCrosswind: {
+          takeoff: this.aircraftLimitationsData.maxCrossWindValue,
+          landing: this.aircraftLimitationsData.maxCrossWindValue
+        },
+        maxTailwind: {
+          takeoff: this.aircraftLimitationsData.maxTailWindTakeoffValue,
+          landing: this.aircraftLimitationsData.maxTailWindLandingValue
+        }
+      };
     }
   },
   filters: {
-    round(value, digits = 2) {
+    round(value: number, digits = 2): number {
       const multiplier = 10 ** digits;
       return Math.round(value * multiplier) / multiplier;
     }
   },
   methods: {
-    updateAircraftLimitations: function(key, value) {
+    updateAircraftLimitations: function(
+      key: keyof IAircraftLimitationsData,
+      value: any
+    ) {
       if (!(key in this.aircraftLimitationsData)) {
         throw new Error(`${key}: ${value} not in aircraftLimitationsData`);
       }
+
       this.aircraftLimitationsData[key] = parseInt(value);
       console.debug(`updating aircraft limitations - ${key}: ${value}`);
     }
   }
-};
+});
 </script>
+
+<style>
+.material-icons {
+  display: inline-flex;
+  vertical-align: top;
+}
+</style>

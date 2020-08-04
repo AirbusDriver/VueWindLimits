@@ -1,5 +1,5 @@
 <template>
-  <div class="bearing-input-slider center-align">
+  <div class="bearing-input-slider" :class="classes">
     <round-slider
       min="0"
       max="360"
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { normalizeBearing } from "../lib/utilities/directions";
+import { normalizeBearing } from "../core/utilities/directions";
 import RoundSlider from "vue-round-slider";
 
 export default {
@@ -22,6 +22,12 @@ export default {
     value: {
       type: Number,
       default: 360
+    },
+    classes: {
+      value: {
+        type: Array,
+        default: () => []
+      }
     }
   },
   computed: {

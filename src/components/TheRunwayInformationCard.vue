@@ -1,21 +1,25 @@
 <template>
-  <div class="runway-information center-align card">
-    <div class="row">
-      <div class="col s12">
-        <h5>Runway Information</h5>
-        <h6>Runway Heading: {{ normalizedHeading | heading }}</h6>
-      </div>
-    </div>
-    <bearing-input :value="value" @input="updateRunwayHeading" />
+  <div class="runway-information-card card">
+    <h5>Runway Heading: {{ normalizedHeading | heading }}</h5>
+
+    <toggle-card>
+      <template v-slot:button="btnProps">
+        <button class="waves-effect btn" @click="btnProps.toggle">
+          <i class="material-icons">{{ btnProps.hidden ? 'edit' : 'done' }}</i> Runway Info
+        </button>
+      </template>
+      <bearing-input :value="value" @input="updateRunwayHeading" :classes="['bearing']" />
+    </toggle-card>
   </div>
 </template>
 
 <script>
-import { normalizeBearing } from "../lib/utilities/directions";
+import { normalizeBearing } from "../core/utilities/directions";
+import ToggleCard from "./ToggleCard";
 import BearingInput from "./BearingInput";
 
 export default {
-  components: { BearingInput },
+  components: { BearingInput, ToggleCard },
   props: {
     value: {
       type: [Number, String],
@@ -41,7 +45,11 @@ export default {
 </script>
 
 <style scoped>
-.runway-information {
+.runway-information-card {
+  padding: 1rem;
+}
+
+.bearing {
   padding: 1rem;
 }
 </style>
