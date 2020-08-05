@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import CrosswindReadout from "@/components/CrosswindReadout.vue";
-import { ExceedenceSeverity } from "@/components/shared/interfaces";
+import { ExceedenceSeverity } from "@/core/limitations/interfaces";
 
 describe("CrosswindReadout", () => {
     test("computes sector correctly", () => {

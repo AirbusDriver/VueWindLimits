@@ -8,7 +8,7 @@ export interface AircraftLimitations {
   maxTailwind: AircraftWindLimitation
 }
 
-export const enum ExceedenceSeverity {
+export enum ExceedenceSeverity {
   LOW = "LOW",
   MED = "MED",
   HIGH = "HIGH",

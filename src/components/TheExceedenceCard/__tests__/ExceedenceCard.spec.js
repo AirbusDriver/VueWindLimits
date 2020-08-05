@@ -1,6 +1,5 @@
-import { mount, Wrapper } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import { ExceedenceCard } from "../index";
-import { AircraftLimitations } from "@/core/interfaces";
 import { WindCondition } from "@/core/winds";
 
 const testAircraftLimitations = {

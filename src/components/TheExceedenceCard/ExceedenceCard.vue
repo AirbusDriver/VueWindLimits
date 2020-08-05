@@ -1,8 +1,32 @@
 <template>
-  <div class="exceedence-card card">
-    <p>Winds: {{ windReadoutText }}</p>
-    <p>Crosswind: {{ crosswindReadoutText }}</p>
-    <p>Head[Tail]wind: {{ headwindReadoutText }}</p>
+  <div class="exceedence-card card-panel">
+    <div class="row">
+      <div class="col s12">
+        <button
+          class="wave-effect btn"
+          @click.capture="toggle()"
+        >{{ takeoffOrLanding === "takeoff" ? "Takeoff" : "Landing" }} Data</button>
+      </div>
+
+      <div class="col s12">
+        <ul class="collection with-header">
+          <li class="collection-header">
+            <h5>Winds: {{ windReadoutText }}</h5>
+            <h6>Runway: {{ runwayHeading + '\u00B0'}}</h6>
+          </li>
+          <li
+            id="crosswind-details"
+            class="collection-item"
+            :class="exceedenceClasses.crosswind"
+          >{{ crosswindReadoutText }}</li>
+          <li
+            id="tailwind-details"
+            class="collection-item"
+            :class="exceedenceClasses.tailwind"
+          >{{ headwindReadoutText }}</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -13,7 +37,90 @@ import { Roundable } from "@/components/shared/mixins";
 import mixins from "vue-typed-mixins";
 import { WindCondition } from "@/core/winds";
 import { calculateCrosswind, calculateHeadwind } from "@/core/windCalculations";
-import { AircraftLimitations } from "@/core/limitations/interfaces";
+import {
+  AircraftLimitations,
+  ExceedenceSeverity
+} from "@/core/limitations/interfaces";
+
+const WARNING_THRESHOLD = 0.7; // exceedences are MED >= this percentage
+
+const suffixes = new Map<ExceedenceSeverity | "error", String>();
+suffixes.set(ExceedenceSeverity.LOW, "low");
+suffixes.set(ExceedenceSeverity.MED, "med");
+suffixes.set(ExceedenceSeverity.HIGH, "high");
+suffixes.set("error", "error");
+
+const EXCEEDENCE_CLASS_PREFIX = "exceedence-";
+
+type CurrentExceedences = {
+  tailwind: {
+    takeoff: ExceedenceSeverity | "error";
+    landing: ExceedenceSeverity | "error";
+  };
+  crosswind: ExceedenceSeverity | "error";
+};
+
+type TakeoffOrLanding = "takeoff" | "landing";
+
+function calcCurrentExceedences(
+  wind: WindCondition,
+  runwayHdg: number,
+  limitations: AircraftLimitations
+): CurrentExceedences {
+  const crosswindValue = Math.abs(
+    calculateCrosswind(runwayHdg, wind.direction, wind.speed)
+  );
+  const headwindValue = calculateHeadwind(
+    runwayHdg,
+    wind.direction,
+    wind.speed
+  );
+  const maxToValue = -limitations.maxTailwind.takeoff;
+  const maxLdgValue = -limitations.maxTailwind.landing;
+  const maxCrossValue = limitations.maxCrosswind.takeoff;
+
+  let crosswind: ExceedenceSeverity,
+    takeoff: ExceedenceSeverity,
+    landing: ExceedenceSeverity;
+
+  const out: CurrentExceedences = {
+    tailwind: {
+      takeoff: "error",
+      landing: "error"
+    },
+    crosswind: "error"
+  };
+
+  if (crosswindValue > maxCrossValue) {
+    out.crosswind = ExceedenceSeverity.HIGH;
+  } else if (crosswindValue < maxCrossValue * WARNING_THRESHOLD) {
+    out.crosswind = ExceedenceSeverity.LOW;
+  } else {
+    out.crosswind = ExceedenceSeverity.MED;
+  }
+
+  if (headwindValue >= 0) {
+    out.tailwind.takeoff = out.tailwind.landing = ExceedenceSeverity.LOW;
+    return out;
+  }
+  if (headwindValue < maxToValue) {
+    out.tailwind.takeoff = ExceedenceSeverity.HIGH;
+  } else if (headwindValue > maxToValue * WARNING_THRESHOLD) {
+    out.tailwind.takeoff = ExceedenceSeverity.LOW;
+  } else {
+    out.tailwind.takeoff = ExceedenceSeverity.MED;
+  }
+
+  if (headwindValue < maxLdgValue) {
+    out.tailwind.landing = ExceedenceSeverity.HIGH;
+  } else if (headwindValue > maxLdgValue * WARNING_THRESHOLD) {
+    out.tailwind.landing = ExceedenceSeverity.LOW;
+  } else {
+    out.tailwind.landing = ExceedenceSeverity.MED;
+  }
+
+  return out;
+}
 
 export default mixins(Roundable).extend({
   name: "ExceedenceCard",
@@ -28,6 +135,11 @@ export default mixins(Roundable).extend({
       type: Number,
       default: 0
     }
+  },
+  data: (): { takeoffOrLanding: TakeoffOrLanding } => {
+    return {
+      takeoffOrLanding: "takeoff"
+    };
   },
   computed: {
     normalizedHeadwind: {
@@ -73,7 +185,7 @@ export default mixins(Roundable).extend({
         );
         const speedText = `${this.currentWindConditions.speed}`;
 
-        return `${dirText} @ ${speedText} kts`;
+        return `${dirText}\u00B0 @ ${speedText} kts`;
       }
     },
     rawHeadwindValue: {
@@ -87,7 +199,68 @@ export default mixins(Roundable).extend({
         const { direction, speed } = this.currentWindConditions;
         return calculateCrosswind(this.runwayHeading, direction, speed);
       }
+    },
+    currentExceedences: {
+      get: function(): CurrentExceedences {
+        return calcCurrentExceedences(
+          this.currentWindConditions,
+          this.runwayHeading,
+          this.aircraftLimitations
+        );
+      }
+    },
+    exceedenceClasses: {
+      get: function(): {
+        tailwind: String;
+        crosswind: String;
+      } {
+        const dataSelection = this.takeoffOrLanding;
+
+        const crosswind =
+          suffixes.get(this.currentExceedences.crosswind) || "error";
+
+        let tailwind: String;
+
+        if (dataSelection === "takeoff") {
+          tailwind =
+            suffixes.get(this.currentExceedences.tailwind.takeoff) || "error";
+        } else {
+          tailwind =
+            suffixes.get(this.currentExceedences.tailwind.landing) || "error";
+        }
+
+        return {
+          tailwind: `${EXCEEDENCE_CLASS_PREFIX}${tailwind}`,
+          crosswind: `${EXCEEDENCE_CLASS_PREFIX}${crosswind}`
+        };
+      }
+    }
+  },
+  methods: {
+    toggle(): TakeoffOrLanding {
+      const newVal =
+        this.takeoffOrLanding === "takeoff" ? "landing" : "takeoff";
+      this.takeoffOrLanding = newVal;
+      return newVal;
     }
   }
 });
 </script>
+
+<style scoped>
+.exceedence-low {
+  background-color: rgb(180, 255, 180) !important;
+}
+
+.exceedence-med {
+  background-color: rgb(247, 174, 174) !important;
+}
+
+.exceedence-high {
+  background-color: rgb(255, 97, 97) !important;
+}
+
+ul > li.collection-item {
+  margin: 1rem;
+}
+</style>

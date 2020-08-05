@@ -38,10 +38,10 @@
 import Vue from "vue";
 import { calculateCrosswind } from "../core/windCalculations";
 import { AircraftLimitations } from "../core/limitations/interfaces";
-import AircraftLimitationsCard from "./AircraftLimitationsCard.vue";
+import AircraftLimitationsCard from "./TheAircraftLimitationsCard.vue";
 import RunwayInformationCard from "./TheRunwayInformationCard.vue";
 import { ExceedenceCard as TheExceedenceCard } from "./TheExceedenceCard";
-import WindInformation from "./WindInformation.vue";
+import WindInformation from "./TheWindInformation.vue";
 import CrosswindReadout from "./CrosswindReadout.vue";
 import { WindCondition } from "../core/winds";
 

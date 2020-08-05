@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Component from "vue-class-component";
-import { ExceedenceSeverity } from "@/components/shared/interfaces";
+import { ExceedenceSeverity } from "@/core/limitations/interfaces";
 
 type AircraftLimitations = {
   maxCrosswind: number;
