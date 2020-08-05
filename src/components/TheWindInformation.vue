@@ -9,7 +9,7 @@
         <div v-show="manualWindSpeed">
           <label>Enter Manual Wind Speed</label>
           <input
-            type="range"
+            type="text"
             :value="windSpeed"
             min="0"
             max="100"
@@ -25,6 +25,13 @@
           </button>
         </template>
         <bearing-input :value="windDirection" @input="updateWindDirection" :classes="['bearing']" />
+        <input
+          type="range"
+          min="0"
+          max="100"
+          :value="windSpeed"
+          @input="updateWindSpeed($event.target.value)"
+        />
       </toggle-card>
     </div>
   </div>
