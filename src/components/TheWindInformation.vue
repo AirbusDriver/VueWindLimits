@@ -2,21 +2,18 @@
   <div class="wind-information-card card">
     <div class="container center-align">
       <span class="manual-entry">
-        <h5>
-          Winds:
-          <span
-            @click="manualWindDirection = !manualWindDirection"
-          >{{ windDirection | bearing }}</span>
-          @ {{ windSpeed }} {{ units }}
-        </h5>
+        <h5
+          @click="manualWindSpeed = !manualWindSpeed"
+        >Winds: {{ windDirection | bearing }} @ {{ windSpeed }} {{ units }}</h5>
         <!-- Manual Inputs -->
-        <div v-show="manualWindDirection">
-          <label>Enter Manual Wind Direction</label>
+        <div v-show="manualWindSpeed">
+          <label>Enter Manual Wind Speed</label>
           <input
-            type="number"
-            id="manual-wind-direction"
-            :value="windDirection"
-            @input="updateWindDirection($event.target.value)"
+            type="range"
+            :value="windSpeed"
+            min="0"
+            max="100"
+            @input="updateWindSpeed($event.target.value)"
           />
         </div>
       </span>
@@ -28,14 +25,6 @@
           </button>
         </template>
         <bearing-input :value="windDirection" @input="updateWindDirection" :classes="['bearing']" />
-
-        <input
-          type="range"
-          :value="windSpeed"
-          min="0"
-          max="100"
-          @input="updateWindSpeed($event.target.value)"
-        />
       </toggle-card>
     </div>
   </div>
@@ -63,7 +52,7 @@ export default {
   },
   data() {
     return {
-      manualWindDirection: false,
+      manualWindSpeed: false,
       windDirection: this.initialWindDirection,
       windSpeed: this.initialWindSpeed
     };

@@ -42,7 +42,6 @@ import AircraftLimitationsCard from "./TheAircraftLimitationsCard.vue";
 import RunwayInformationCard from "./TheRunwayInformationCard.vue";
 import { ExceedenceCard as TheExceedenceCard } from "./TheExceedenceCard";
 import WindInformation from "./TheWindInformation.vue";
-import CrosswindReadout from "./CrosswindReadout.vue";
 import { WindCondition } from "../core/winds";
 
 const DEFAULT_AIRCRAFT_LIMITATIONS = {
