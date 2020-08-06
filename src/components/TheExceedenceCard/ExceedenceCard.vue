@@ -1,10 +1,10 @@
 <template>
   <div class="exceedence-card-content">
-    <button
-      id="data-btn"
-      class="wave-effect btn"
-      @click.capture="toggle()"
-    >{{ takeoffOrLanding === "takeoff" ? "Takeoff" : "Landing" }} Data</button>
+    <button id="data-btn" class="wave-effect btn" @click.capture="toggle()">
+      <i
+        class="material-icons"
+      >{{ takeoffOrLanding === "takeoff" ? "flight_takeoff" : "flight_land" }}</i>
+    </button>
 
     <ul class="collection with-header">
       <li class="collection-header">
