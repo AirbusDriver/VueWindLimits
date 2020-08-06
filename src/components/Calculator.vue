@@ -38,6 +38,10 @@
 import Vue from "vue";
 import { calculateCrosswind } from "../core/windCalculations";
 import { AircraftLimitations } from "../core/limitations/interfaces";
+import {
+  loadAircraftLimitations,
+  saveAircraftLimitations
+} from "@/core/limitations/persistence";
 import AircraftLimitationsCard from "./TheAircraftLimitationsCard.vue";
 import RunwayInformationCard from "./TheRunwayInformationCard.vue";
 import { ExceedenceCard as TheExceedenceCard } from "./TheExceedenceCard";
@@ -70,6 +74,18 @@ interface CalcData {
 
 export default Vue.extend({
   name: "Calculator",
+  filters: {
+    round(value: number, digits = 2): number {
+      const multiplier = 10 ** digits;
+      return Math.round(value * multiplier) / multiplier;
+    }
+  },
+  components: {
+    AircraftLimitationsCard,
+    RunwayInformationCard,
+    WindInformation,
+    TheExceedenceCard
+  },
   data: function(): CalcData {
     return {
       aircraftLimitationsData: { ...DEFAULT_AIRCRAFT_LIMITATIONS },
@@ -77,12 +93,6 @@ export default Vue.extend({
       runwayHeading: 0,
       units: "kts"
     };
-  },
-  components: {
-    AircraftLimitationsCard,
-    RunwayInformationCard,
-    WindInformation,
-    TheExceedenceCard
   },
   computed: {
     crosswind: function(): number {
@@ -107,12 +117,6 @@ export default Vue.extend({
       };
     }
   },
-  filters: {
-    round(value: number, digits = 2): number {
-      const multiplier = 10 ** digits;
-      return Math.round(value * multiplier) / multiplier;
-    }
-  },
   methods: {
     updateAircraftLimitations: function(
       key: keyof IAircraftLimitationsData,
@@ -124,6 +128,30 @@ export default Vue.extend({
 
       this.aircraftLimitationsData[key] = parseInt(value);
       console.debug(`updating aircraft limitations - ${key}: ${value}`);
+    }
+  },
+  watch: {
+    aircraftLimitationsData: {
+      handler: function(newVal: IAircraftLimitationsData) {
+        saveAircraftLimitations(this.aircraftLimitations);
+      },
+      deep: true
+    }
+  },
+  created: function() {
+    try {
+      const loadedLimitations = loadAircraftLimitations();
+      if (loadedLimitations != null) {
+        console.debug("loaded limitations from storage", loadedLimitations);
+        this.aircraftLimitationsData.maxTailWindTakeoffValue =
+          loadedLimitations.maxTailwind.takeoff;
+        this.aircraftLimitationsData.maxTailWindLandingValue =
+          loadedLimitations.maxTailwind.landing;
+        this.aircraftLimitationsData.maxCrossWindValue =
+          loadedLimitations.maxCrosswind.takeoff;
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 });
