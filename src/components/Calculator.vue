@@ -13,7 +13,7 @@
 
     <div class="row">
       <div class="col s12">
-        <div class="card">
+        <div id="inputs-card" class="card">
           <tabbed-input :tabKeys="['limitations', 'winds', 'runway']" v-slot="{ tabs, toggle }">
             <div class="row">
               <div class="input-selection-group">
@@ -197,5 +197,9 @@ export default Vue.extend({
 
 .input-selection-group button {
   width: 100%;
+}
+
+#inputs-card .bearing {
+  padding: 0.5rem;
 }
 </style>

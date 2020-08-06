@@ -40,8 +40,4 @@ export default {
 .runway-information-card-content {
   padding: 0rem 1rem;
 }
-
-.bearing {
-  padding: 0.5rem;
-}
 </style>
