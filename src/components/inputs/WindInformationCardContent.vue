@@ -1,10 +1,10 @@
 <template>
   <div class="wind-information-card">
-    <div class="container center-align">
+    <div class="center-align">
       <span class="manual-entry">
-        <h5
+        <h6
           @click="manualWindSpeed = !manualWindSpeed"
-        >Winds: {{ windDirection | bearing }} @ {{ windSpeed }} {{ units }}</h5>
+        >Winds: {{ windDirection | bearing }} @ {{ windSpeed }} {{ units }}</h6>
         <!-- Manual Inputs -->
         <div v-show="manualWindSpeed">
           <label>Enter Manual Wind Speed</label>
@@ -87,10 +87,6 @@ export default {
 
 <style scoped>
 .wind-information-card {
-  padding: 1rem;
-}
-
-.bearing {
-  padding: 1rem;
+  padding: 0rem 1rem;
 }
 </style>
