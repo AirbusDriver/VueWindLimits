@@ -1,5 +1,5 @@
 <template>
-  <div class="aircraft-limitations-card card">
+  <div class="aircraft-limitations-card">
     <ToggleCard>
       <template v-slot:button="btnProps">
         <button class="waves-effect btn" @click.capture="btnProps.toggle">

@@ -1,5 +1,5 @@
 <template>
-  <div class="runway-information-card card">
+  <div class="runway-information-card">
     <h5>Runway Heading: {{ normalizedHeading | heading }}</h5>
 
     <toggle-card>

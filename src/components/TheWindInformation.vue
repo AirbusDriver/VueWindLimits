@@ -1,5 +1,5 @@
 <template>
-  <div class="wind-information-card card">
+  <div class="wind-information-card">
     <div class="container center-align">
       <span class="manual-entry">
         <h5

@@ -3,32 +3,58 @@
     <h3>Wind Calculator</h3>
     <div class="row">
       <div class="col s12">
-        <aircraft-limitations-card
-          :aircraft-limitations-data="aircraftLimitationsData"
-          :units="units"
-          @limitationsChanged="updateAircraftLimitations"
-        />
-      </div>
-
-      <div class="col s12 m6">
-        <runway-information-card :value="runwayHeading" @input="runwayHeading = $event" />
-      </div>
-
-      <div class="col s12 m6">
-        <wind-information
-          :initial-wind-speed="windInfo.speed"
-          :initial-wind-direction="windInfo.direction"
-          :units="units"
-          @update:wind-info="windInfo = $event"
-        />
-      </div>
-
-      <div class="col s12">
         <the-exceedence-card
           :current-wind-conditions="windConditions"
           :aircraft-limitations="aircraftLimitations"
           :runway-heading="runwayHeading"
         ></the-exceedence-card>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s12">
+        <div class="card">
+          <tabbed-input :tabKeys="['limitations', 'winds', 'runway']" v-slot="{ tabs, toggle }">
+            <div class="row">
+              <div class="input-selection-group">
+                <div class="col s4">
+                  <button class="btn toggle-button" @click.capture="toggle('limitations')">Limits</button>
+                </div>
+                <div class="col s4">
+                  <button class="btn toggle-button" @click.capture="toggle('runway')">Runway</button>
+                </div>
+                <div class="col s4">
+                  <button class="btn toggle-button" @click.capture="toggle('winds')">Winds</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col s12">
+                <aircraft-limitations-card
+                  v-show="tabs.get('limitations')"
+                  :aircraft-limitations-data="aircraftLimitationsData"
+                  :units="units"
+                  @limitationsChanged="updateAircraftLimitations"
+                />
+
+                <runway-information-card
+                  v-if="tabs.get('runway')"
+                  :value="runwayHeading"
+                  @input="runwayHeading = $event"
+                />
+
+                <wind-information
+                  v-show="tabs.get('winds')"
+                  :initial-wind-speed="windInfo.speed"
+                  :initial-wind-direction="windInfo.direction"
+                  :units="units"
+                  @update:wind-info="windInfo = $event"
+                />
+              </div>
+            </div>
+          </tabbed-input>
+        </div>
       </div>
     </div>
   </div>
@@ -42,6 +68,7 @@ import {
   loadAircraftLimitations,
   saveAircraftLimitations
 } from "@/core/limitations/persistence";
+import TabbedInput from "./ui/TabbedInput.vue";
 import AircraftLimitationsCard from "./TheAircraftLimitationsCard.vue";
 import RunwayInformationCard from "./TheRunwayInformationCard.vue";
 import { ExceedenceCard as TheExceedenceCard } from "./TheExceedenceCard";
@@ -84,7 +111,8 @@ export default Vue.extend({
     AircraftLimitationsCard,
     RunwayInformationCard,
     WindInformation,
-    TheExceedenceCard
+    TheExceedenceCard,
+    TabbedInput
   },
   data: function(): CalcData {
     return {
@@ -161,5 +189,13 @@ export default Vue.extend({
 .material-icons {
   display: inline-flex;
   vertical-align: top;
+}
+
+.input-selection-group {
+  padding: 1rem 2rem;
+}
+
+.input-selection-group button {
+  width: 100%;
 }
 </style>
