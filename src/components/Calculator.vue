@@ -3,11 +3,13 @@
     <h3>Wind Calculator</h3>
     <div class="row">
       <div class="col s12">
-        <the-exceedence-card
-          :current-wind-conditions="windConditions"
-          :aircraft-limitations="aircraftLimitations"
-          :runway-heading="runwayHeading"
-        ></the-exceedence-card>
+        <div class="card">
+          <the-exceedence-card
+            :current-wind-conditions="windConditions"
+            :aircraft-limitations="aircraftLimitations"
+            :runway-heading="runwayHeading"
+          />
+        </div>
       </div>
     </div>
 
