@@ -39,7 +39,7 @@
 
 <script>
 import { normalizeBearing } from "../core/utilities/directions";
-import BearingInput from "./BearingInput";
+import BearingInput from "../components/ui/BearingInput";
 import ToggleCard from "./ToggleCard";
 
 export default {

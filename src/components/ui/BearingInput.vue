@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { normalizeBearing } from "../core/utilities/directions";
+import { normalizeBearing } from "../../core/utilities/directions";
 import RoundSlider from "vue-round-slider";
 
 export default {

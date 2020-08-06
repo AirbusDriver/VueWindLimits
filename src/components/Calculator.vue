@@ -31,14 +31,14 @@
 
             <div class="row">
               <div class="col s12">
-                <aircraft-limitations-card
+                <aircraft-limitations-card-content
                   v-show="tabs.get('limitations')"
                   :aircraft-limitations-data="aircraftLimitationsData"
                   :units="units"
                   @limitationsChanged="updateAircraftLimitations"
                 />
 
-                <runway-information-card
+                <runway-information-card-content
                   v-if="tabs.get('runway')"
                   :value="runwayHeading"
                   @input="runwayHeading = $event"
@@ -69,8 +69,8 @@ import {
   saveAircraftLimitations
 } from "@/core/limitations/persistence";
 import TabbedInput from "./ui/TabbedInput.vue";
-import AircraftLimitationsCard from "./TheAircraftLimitationsCard.vue";
-import RunwayInformationCard from "./TheRunwayInformationCard.vue";
+import AircraftLimitationsCardContent from "./inputs/AircraftLimitationsCardContent.vue";
+import RunwayInformationCardContent from "./inputs/RunwayInformationCardContent.vue";
 import { ExceedenceCard as TheExceedenceCard } from "./TheExceedenceCard";
 import WindInformation from "./TheWindInformation.vue";
 import { WindCondition } from "../core/winds";
@@ -108,8 +108,8 @@ export default Vue.extend({
     }
   },
   components: {
-    AircraftLimitationsCard,
-    RunwayInformationCard,
+    AircraftLimitationsCardContent,
+    RunwayInformationCardContent,
     WindInformation,
     TheExceedenceCard,
     TabbedInput
