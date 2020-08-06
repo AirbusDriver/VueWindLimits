@@ -1,6 +1,6 @@
 <template>
   <div class="tabbed-input-content">
-    <slot :active="active" :toggle="toggle" :tabs="tabs"></slot>
+    <slot :active="active" :toggle="toggle" :tabs="tabs" :expanded="expanded"></slot>
   </div>
 </template>
 
@@ -43,6 +43,9 @@ export default Vue.extend({
       set: function(tabsState: TabsState) {
         this.tabs = tabsState;
       }
+    },
+    expanded: function(): boolean {
+      return [...this.tabsState.values()].includes(true);
     }
   },
   methods: {
