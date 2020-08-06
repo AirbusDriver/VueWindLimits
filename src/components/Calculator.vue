@@ -44,7 +44,7 @@
                   @input="runwayHeading = $event"
                 />
 
-                <wind-information
+                <wind-information-card-content
                   v-show="tabs.get('winds')"
                   :initial-wind-speed="windInfo.speed"
                   :initial-wind-direction="windInfo.direction"
@@ -71,8 +71,8 @@ import {
 import TabbedInput from "./ui/TabbedInput.vue";
 import AircraftLimitationsCardContent from "./inputs/AircraftLimitationsCardContent.vue";
 import RunwayInformationCardContent from "./inputs/RunwayInformationCardContent.vue";
+import WindInformationCardContent from "./inputs/WindInformationCardContent.vue";
 import { ExceedenceCard as TheExceedenceCard } from "./TheExceedenceCard";
-import WindInformation from "./TheWindInformation.vue";
 import { WindCondition } from "../core/winds";
 
 const DEFAULT_AIRCRAFT_LIMITATIONS = {
@@ -110,7 +110,7 @@ export default Vue.extend({
   components: {
     AircraftLimitationsCardContent,
     RunwayInformationCardContent,
-    WindInformation,
+    WindInformationCardContent,
     TheExceedenceCard,
     TabbedInput
   },
