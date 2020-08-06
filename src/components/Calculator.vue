@@ -18,39 +18,47 @@
             <div class="row">
               <div class="input-selection-group">
                 <div class="col s4">
-                  <button class="btn toggle-button" @click.capture="toggle('limitations')">Limits</button>
+                  <a class="btn toggle-button" @click.capture="toggle('limitations')">
+                    <i class="material-icons">airplanemode_active</i>
+                  </a>
                 </div>
                 <div class="col s4">
-                  <button class="btn toggle-button" @click.capture="toggle('runway')">Runway</button>
+                  <a class="btn toggle-button" @click.capture="toggle('runway')">
+                    <i class="material-icons">navigation</i>
+                  </a>
                 </div>
                 <div class="col s4">
-                  <button class="btn toggle-button" @click.capture="toggle('winds')">Winds</button>
+                  <a class="btn toggle-button" @click.capture="toggle('winds')">
+                    <i class="material-icons">wb_cloudy</i>
+                  </a>
                 </div>
               </div>
             </div>
 
             <div class="row">
               <div class="col s12">
-                <aircraft-limitations-card-content
-                  v-show="tabs.get('limitations')"
-                  :aircraft-limitations-data="aircraftLimitationsData"
-                  :units="units"
-                  @limitationsChanged="updateAircraftLimitations"
-                />
+                <transition name="fade" mode="out-in">
+                  <aircraft-limitations-card-content
+                    v-if="tabs.get('limitations')"
+                    :aircraft-limitations-data="aircraftLimitationsData"
+                    :units="units"
+                    @limitationsChanged="updateAircraftLimitations"
+                  />
 
-                <runway-information-card-content
-                  v-if="tabs.get('runway')"
-                  :value="runwayHeading"
-                  @input="runwayHeading = $event"
-                />
+                  <runway-information-card-content
+                    v-if="tabs.get('runway')"
+                    :value="runwayHeading"
+                    @input="runwayHeading = $event"
+                  />
 
-                <wind-information-card-content
-                  v-show="tabs.get('winds')"
-                  :initial-wind-speed="windInfo.speed"
-                  :initial-wind-direction="windInfo.direction"
-                  :units="units"
-                  @update:wind-info="windInfo = $event"
-                />
+                  <wind-information-card-content
+                    v-if="tabs.get('winds')"
+                    :initial-wind-speed="windInfo.speed"
+                    :initial-wind-direction="windInfo.direction"
+                    :units="units"
+                    @update:wind-info="windInfo = $event"
+                  />
+                </transition>
               </div>
             </div>
           </tabbed-input>
@@ -195,11 +203,31 @@ export default Vue.extend({
   padding: 1rem 2rem;
 }
 
-.input-selection-group button {
+.input-selection-group a {
   width: 100%;
 }
 
 #inputs-card .bearing {
   padding: 0.5rem;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: 0.15s;
+}
+
+.fade-enter {
+  opacity: 0;
+  transform: translateY(-50%) scaleY(0%);
+}
+
+.fade-enter-to {
+  opacity: 100;
+  transform: translateY(0%) scaleY(100%);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-50%) scaleY(0%);
 }
 </style>
