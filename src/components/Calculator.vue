@@ -3,32 +3,58 @@
     <h3>Wind Calculator</h3>
     <div class="row">
       <div class="col s12">
-        <aircraft-limitations-card
-          :aircraft-limitations-data="aircraftLimitationsData"
-          :units="units"
-          @limitationsChanged="updateAircraftLimitations"
-        />
-      </div>
-
-      <div class="col s12 m6">
-        <runway-information-card :value="runwayHeading" @input="runwayHeading = $event" />
-      </div>
-
-      <div class="col s12 m6">
-        <wind-information
-          :initial-wind-speed="windInfo.speed"
-          :initial-wind-direction="windInfo.direction"
-          :units="units"
-          @update:wind-info="windInfo = $event"
-        />
-      </div>
-
-      <div class="col s12">
         <the-exceedence-card
           :current-wind-conditions="windConditions"
           :aircraft-limitations="aircraftLimitations"
           :runway-heading="runwayHeading"
         ></the-exceedence-card>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s12">
+        <div class="card">
+          <tabbed-input :tabKeys="['limitations', 'winds', 'runway']" v-slot="{ tabs, toggle }">
+            <div class="row">
+              <div class="input-selection-group">
+                <div class="col s4">
+                  <button class="btn toggle-button" @click.capture="toggle('limitations')">Limits</button>
+                </div>
+                <div class="col s4">
+                  <button class="btn toggle-button" @click.capture="toggle('runway')">Runway</button>
+                </div>
+                <div class="col s4">
+                  <button class="btn toggle-button" @click.capture="toggle('winds')">Winds</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col s12">
+                <aircraft-limitations-card-content
+                  v-show="tabs.get('limitations')"
+                  :aircraft-limitations-data="aircraftLimitationsData"
+                  :units="units"
+                  @limitationsChanged="updateAircraftLimitations"
+                />
+
+                <runway-information-card-content
+                  v-if="tabs.get('runway')"
+                  :value="runwayHeading"
+                  @input="runwayHeading = $event"
+                />
+
+                <wind-information-card-content
+                  v-show="tabs.get('winds')"
+                  :initial-wind-speed="windInfo.speed"
+                  :initial-wind-direction="windInfo.direction"
+                  :units="units"
+                  @update:wind-info="windInfo = $event"
+                />
+              </div>
+            </div>
+          </tabbed-input>
+        </div>
       </div>
     </div>
   </div>
@@ -42,10 +68,11 @@ import {
   loadAircraftLimitations,
   saveAircraftLimitations
 } from "@/core/limitations/persistence";
-import AircraftLimitationsCard from "./TheAircraftLimitationsCard.vue";
-import RunwayInformationCard from "./TheRunwayInformationCard.vue";
+import TabbedInput from "./ui/TabbedInput.vue";
+import AircraftLimitationsCardContent from "./inputs/AircraftLimitationsCardContent.vue";
+import RunwayInformationCardContent from "./inputs/RunwayInformationCardContent.vue";
+import WindInformationCardContent from "./inputs/WindInformationCardContent.vue";
 import { ExceedenceCard as TheExceedenceCard } from "./TheExceedenceCard";
-import WindInformation from "./TheWindInformation.vue";
 import { WindCondition } from "../core/winds";
 
 const DEFAULT_AIRCRAFT_LIMITATIONS = {
@@ -81,10 +108,11 @@ export default Vue.extend({
     }
   },
   components: {
-    AircraftLimitationsCard,
-    RunwayInformationCard,
-    WindInformation,
-    TheExceedenceCard
+    AircraftLimitationsCardContent,
+    RunwayInformationCardContent,
+    WindInformationCardContent,
+    TheExceedenceCard,
+    TabbedInput
   },
   data: function(): CalcData {
     return {
@@ -161,5 +189,13 @@ export default Vue.extend({
 .material-icons {
   display: inline-flex;
   vertical-align: top;
+}
+
+.input-selection-group {
+  padding: 1rem 2rem;
+}
+
+.input-selection-group button {
+  width: 100%;
 }
 </style>

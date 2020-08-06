@@ -1,5 +1,5 @@
 <template>
-  <div class="wind-information-card card">
+  <div class="wind-information-card">
     <div class="container center-align">
       <span class="manual-entry">
         <h5
@@ -18,32 +18,24 @@
         </div>
       </span>
 
-      <toggle-card>
-        <template v-slot:button="btnProps">
-          <button class="waves-effect btn" @click.capture="btnProps.toggle">
-            <i class="material-icons">{{ btnProps.hidden ? "edit" : "done" }}</i> Wind Conditions
-          </button>
-        </template>
-        <bearing-input :value="windDirection" @input="updateWindDirection" :classes="['bearing']" />
-        <input
-          type="range"
-          min="0"
-          max="100"
-          :value="windSpeed"
-          @input="updateWindSpeed($event.target.value)"
-        />
-      </toggle-card>
+      <bearing-input :value="windDirection" @input="updateWindDirection" :classes="['bearing']" />
+      <input
+        type="range"
+        min="0"
+        max="100"
+        :value="windSpeed"
+        @input="updateWindSpeed($event.target.value)"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { normalizeBearing } from "../core/utilities/directions";
-import BearingInput from "./BearingInput";
-import ToggleCard from "./ToggleCard";
+import { normalizeBearing } from "@/core/utilities/directions";
+import BearingInput from "@/components/ui/BearingInput";
 
 export default {
-  components: { BearingInput, ToggleCard },
+  components: { BearingInput },
   props: {
     initialWindSpeed: {
       type: Number,
