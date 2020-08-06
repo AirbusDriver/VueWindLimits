@@ -1,32 +1,27 @@
 <template>
-  <div class="exceedence-card card-panel">
-    <div class="row">
-      <div class="col s12">
-        <button
-          class="wave-effect btn"
-          @click.capture="toggle()"
-        >{{ takeoffOrLanding === "takeoff" ? "Takeoff" : "Landing" }} Data</button>
-      </div>
+  <div class="exceedence-card-content">
+    <button
+      id="data-btn"
+      class="wave-effect btn"
+      @click.capture="toggle()"
+    >{{ takeoffOrLanding === "takeoff" ? "Takeoff" : "Landing" }} Data</button>
 
-      <div class="col s12">
-        <ul class="collection with-header">
-          <li class="collection-header">
-            <h5>Winds: {{ windReadoutText }}</h5>
-            <h6>Runway: {{ runwayHeading + '\u00B0'}}</h6>
-          </li>
-          <li
-            id="crosswind-details"
-            class="collection-item"
-            :class="exceedenceClasses.crosswind"
-          >{{ crosswindReadoutText }}</li>
-          <li
-            id="tailwind-details"
-            class="collection-item"
-            :class="exceedenceClasses.tailwind"
-          >{{ headwindReadoutText }}</li>
-        </ul>
-      </div>
-    </div>
+    <ul class="collection with-header">
+      <li class="collection-header">
+        <h6>Winds: {{ windReadoutText }}</h6>
+        <h6>Runway: {{ runwayHeading + '\u00B0'}}</h6>
+      </li>
+      <li
+        id="crosswind-details"
+        class="collection-item"
+        :class="exceedenceClasses.crosswind"
+      >{{ crosswindReadoutText }}</li>
+      <li
+        id="tailwind-details"
+        class="collection-item"
+        :class="exceedenceClasses.tailwind"
+      >{{ headwindReadoutText }}</li>
+    </ul>
   </div>
 </template>
 
@@ -262,5 +257,9 @@ export default mixins(Roundable).extend({
 
 ul > li.collection-item {
   margin: 1rem;
+}
+
+#data-btn {
+  margin: 10px;
 }
 </style>
