@@ -32,6 +32,7 @@
 
 <script>
 import { normalizeBearing } from "@/core/utilities/directions";
+import { paddedDirection } from "@/components/shared/filters";
 import BearingInput from "@/components/ui/BearingInput";
 
 export default {
@@ -66,7 +67,7 @@ export default {
   },
   filters: {
     bearing: val => {
-      return `${val}`.padStart(3, 0);
+      return paddedDirection(val);
     }
   },
   methods: {

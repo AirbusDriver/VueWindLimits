@@ -9,18 +9,14 @@
     <ul class="collection with-header">
       <li class="collection-header">
         <h6>Winds: {{ windReadoutText }}</h6>
-        <h6>Runway: {{ runwayHeading + '\u00B0'}}</h6>
+        <h6>Runway: {{ runwayHeading | paddedDirection }}</h6>
       </li>
-      <li
-        id="crosswind-details"
-        class="collection-item"
-        :class="exceedenceClasses.crosswind"
-      >{{ crosswindReadoutText }}</li>
-      <li
-        id="tailwind-details"
-        class="collection-item"
-        :class="exceedenceClasses.tailwind"
-      >{{ headwindReadoutText }}</li>
+      <li id="crosswind-details" class="collection-item" :class="exceedenceClasses.crosswind">
+        <h6>{{ crosswindReadoutText }}</h6>
+      </li>
+      <li id="tailwind-details" class="collection-item" :class="exceedenceClasses.tailwind">
+        <h6>{{ headwindReadoutText }}</h6>
+      </li>
     </ul>
   </div>
 </template>
@@ -29,6 +25,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import { Roundable } from "@/components/shared/mixins";
+import { paddedDirection } from "@/components/shared/filters";
 import mixins from "vue-typed-mixins";
 import { WindCondition } from "@/core/winds";
 import { calculateCrosswind, calculateHeadwind } from "@/core/windCalculations";
@@ -136,6 +133,7 @@ export default mixins(Roundable).extend({
       takeoffOrLanding: "takeoff"
     };
   },
+  filters: { paddedDirection },
   computed: {
     normalizedHeadwind: {
       get: function(): number {
@@ -174,13 +172,8 @@ export default mixins(Roundable).extend({
     },
     windReadoutText: {
       get: function(): string {
-        const dirText = `${this.currentWindConditions.direction}`.padStart(
-          3,
-          "0"
-        );
-        const speedText = `${this.currentWindConditions.speed}`;
-
-        return `${dirText}\u00B0 @ ${speedText} kts`;
+        const { direction, speed } = this.currentWindConditions;
+        return `${paddedDirection(direction)} @ ${speed} kts`;
       }
     },
     rawHeadwindValue: {
